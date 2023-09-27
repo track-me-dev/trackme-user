@@ -22,7 +22,7 @@ import java.util.List;
 public class SecurityConfig {
 
     private static final String[] AUTH_WHITELIST = {
-            "/api/**"
+            "/users/token", "/users/login", "/users/sign-up"
     };
 
     private final TokenFilter tokenFilter;
@@ -34,8 +34,6 @@ public class SecurityConfig {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .antMatchers("/**/token", "/**/login", "/**/signUp", "/**/signUpConfirm","/**/demo")
-                .permitAll()
                 .antMatchers(AUTH_WHITELIST)
                 .permitAll()
                 .antMatchers(HttpMethod.GET, "/exception/**")

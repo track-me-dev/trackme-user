@@ -28,7 +28,7 @@ public class UserController {
     private final UserMapper userMapper;
 
     @PostMapping("/login")
-    public ResponseEntity<UserTokenResponseDTO> login(UserLoginRequestDTO loginDTO) {
+    public ResponseEntity<UserTokenResponseDTO> login(@RequestBody UserLoginRequestDTO loginDTO) {
 
         try {
             userService.signIn(loginDTO);
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<UserResponseDTO> signUp(SignUpRequestDTO signUpRequestDTO) {
+    public ResponseEntity<UserResponseDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) {
         try {
             User input = userMapper.toEntity(signUpRequestDTO);
             User user = userService.signUp(input);
@@ -73,7 +73,7 @@ public class UserController {
     }
 
     @PutMapping("/token")
-    public ResponseEntity<UserTokenResponseDTO> updateAccessToken(UserTokenUpdateRequestDTO userTokenUpdateRequestDTO) {
+    public ResponseEntity<UserTokenResponseDTO> updateAccessToken(@RequestBody UserTokenUpdateRequestDTO userTokenUpdateRequestDTO) {
         try {
             log.debug("TokenUpdate {}", userTokenUpdateRequestDTO);
             return new ResponseEntity<>(

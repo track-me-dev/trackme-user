@@ -87,6 +87,7 @@ public class UserService {
         User user = userRepository.findById(input.getUsername()).orElse(
                 User.builder()
                         .username(input.getUsername())
+                        .role(input.getRole())
                         .build()
         );
 

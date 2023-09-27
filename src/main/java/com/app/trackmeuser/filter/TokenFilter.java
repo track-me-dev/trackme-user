@@ -1,5 +1,6 @@
 package com.app.trackmeuser.filter;
 
+import com.app.trackmeuser.model.UserRoleType;
 import com.app.trackmeuser.security.AuthConstant;
 import com.app.trackmeuser.service.TokenService;
 import io.jsonwebtoken.*;
@@ -40,7 +41,7 @@ public class TokenFilter extends OncePerRequestFilter {
                         request.getHeader(AuthConstant.AUTHORIZATION)
                                 .replace(AuthConstant.BEARER, ""));
 
-                if (tokenService.getUserCode(claims.getSubject()) == (int)claims.get("code")
+                if (tokenService.getUserCode(claims.getSubject()) == (int) claims.get("code")
                         && claims.get("authorities") != null) {
                     setUpSpringAuthentication(claims);
                 }
@@ -49,7 +50,7 @@ public class TokenFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken("admin", null,
-                                AuthorityUtils.commaSeparatedStringToAuthorityList("ROLE_USER")));
+                                AuthorityUtils.createAuthorityList(UserRoleType.ROLE_ADMIN.getValue())));
             } else {
                 SecurityContextHolder.clearContext();
             }
@@ -65,9 +66,11 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private void setUpSpringAuthentication(Claims claims) {
         @SuppressWarnings("unchecked")
-        List<String> authorities = (List)claims.get("authorities");
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(claims.getSubject(), null,
-                authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+        List<String> authorities = (List) claims.get("authorities");
+        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                claims.getSubject(),
+                null,
+                authorities.stream().map(SimpleGrantedAuthority::new).toList());
         SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
