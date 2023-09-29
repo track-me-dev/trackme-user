@@ -72,6 +72,12 @@ public class UserController {
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponseDTO> getUser(@PathVariable String username) {
+        User user = userService.getUser(username);
+        return new ResponseEntity<>(userMapper.toDTO(user), HttpStatus.OK);
+    }
+
     @PutMapping("/token")
     public ResponseEntity<UserTokenResponseDTO> updateAccessToken(@RequestBody UserTokenUpdateRequestDTO userTokenUpdateRequestDTO) {
         try {

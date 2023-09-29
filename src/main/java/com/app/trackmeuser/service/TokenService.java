@@ -1,7 +1,7 @@
 package com.app.trackmeuser.service;
 
 import com.app.trackmeuser.model.User;
-import com.app.trackmeuser.security.JWTConstant;
+import com.app.trackmeuser.security.JwtConstant;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,7 +12,10 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -20,8 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TokenService {
 
-    // 서버가 실행되면 SECRET_KEY 는 매번 초기화 된다.
-    private final String SECRET_KEY = UUID.randomUUID().toString();
+    private final JwtConstant jwtConstant;
     // User 에 대한 변경사항이 있을경우 해당 코드가 변경되고 이를 기반으로 기존 유저의 수정이 발생했을때 토큰을 무효화한다.
     private final Map<String, Integer> USER_SECRET_KEY = new HashMap<>();
     private final UserService userService;
@@ -55,8 +57,8 @@ public class TokenService {
                                 .collect(Collectors.toList()))
                 .claim("code", USER_SECRET_KEY.get(username))
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWTConstant.ACCESS_TOKEN_EXPIRED))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes()).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConstant.getAccessTokenExpired()))
+                .signWith(SignatureAlgorithm.HS512, jwtConstant.getSecretKey().getBytes()).compact();
     }
 
     public String genRefreshToken(String username) {
@@ -65,8 +67,8 @@ public class TokenService {
                 .setSubject(username)
                 .setIssuer("TRACKME_ADMIN")
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + JWTConstant.REFRESH_TOKEN_EXPIRED))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY.getBytes()).compact();
+                .setExpiration(new Date(System.currentTimeMillis() + jwtConstant.getRefreshTokenExpired()))
+                .signWith(SignatureAlgorithm.HS512, jwtConstant.getSecretKey().getBytes()).compact();
     }
 
     public String genAccessTokenByRefreshToken(String refreshToken) {
@@ -76,6 +78,6 @@ public class TokenService {
     }
 
     public Claims validateToken(String jwtToken) {
-        return Jwts.parser().setSigningKey(SECRET_KEY.getBytes()).parseClaimsJws(jwtToken).getBody();
+        return Jwts.parser().setSigningKey(jwtConstant.getSecretKey().getBytes()).parseClaimsJws(jwtToken).getBody();
     }
 }

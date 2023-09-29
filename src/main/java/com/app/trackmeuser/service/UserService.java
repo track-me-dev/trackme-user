@@ -21,6 +21,7 @@ public class UserService {
 
     private final static Set<UserRoleType> USER_ROLE_FILTER_SET = new HashSet<>(List.of(UserRoleType.ROLE_CUSTOMER));
 
+    private final AuthConstant authConstant;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -79,7 +80,7 @@ public class UserService {
     protected User setUser(User input) {
 
         // Admin User를 제외한 나머지는 Role에 대한 검사를 진행한다.
-        if (!input.getUsername().equals(AuthConstant.ADMIN_USER) &&
+        if (!input.getUsername().equals(authConstant.getAdminUser()) &&
                 !USER_ROLE_FILTER_SET.contains(input.getRole())) {
             throw new RuntimeException("User Role Not Match");
         }
