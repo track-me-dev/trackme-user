@@ -27,6 +27,7 @@ import java.util.Objects;
 public class TokenFilter extends OncePerRequestFilter {
 
     private final TokenService tokenService;
+    private final AuthConstant authConstant;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -45,7 +46,7 @@ public class TokenFilter extends OncePerRequestFilter {
                     setUpSpringAuthentication(claims);
                 }
             } else if (Objects.nonNull(request.getHeader(AuthConstant.AUTHORIZATION)) // 디버그 모드인 경우
-                    && request.getHeader(AuthConstant.AUTHORIZATION).equals(AuthConstant.DEBUG_MODE)) {
+                    && request.getHeader(AuthConstant.AUTHORIZATION).equals(authConstant.getDebugKey())) {
 
                 SecurityContextHolder.getContext().setAuthentication(
                         new UsernamePasswordAuthenticationToken("admin", null,
