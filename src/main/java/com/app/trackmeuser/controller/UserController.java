@@ -78,6 +78,12 @@ public class UserController {
         return new ResponseEntity<>(userMapper.toDTO(user), HttpStatus.OK);
     }
 
+    @GetMapping("/username")
+    public ResponseEntity<String> getUsername() {
+        String loginUserId = userService.getLoginUserId();
+        return new ResponseEntity<>(loginUserId, HttpStatus.OK);
+    }
+
     @PutMapping("/token")
     public ResponseEntity<UserTokenResponseDTO> updateAccessToken(@RequestBody UserTokenUpdateRequestDTO userTokenUpdateRequestDTO) {
         try {

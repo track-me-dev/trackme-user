@@ -12,6 +12,6 @@ import org.springframework.stereotype.Component;
 public class JwtConstant {
 
     private String secretKey;
-    private String accessTokenExpired;
-    private String refreshTokenExpired;
+    private Long accessTokenExpired;
+    private Long refreshTokenExpired;
 }
